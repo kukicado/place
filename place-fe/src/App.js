@@ -3,7 +3,7 @@ import socketIOClient from "socket.io-client";
 import "./App.css";
 
 const socket = socketIOClient("wss://hammerhead-app-ypn9f.ondigitalocean.app", {
-  secure: true,
+  rejectUnauthorized: false,
 });
 
 function App(props) {
