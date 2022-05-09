@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import socketIOClient from "socket.io-client";
 import "./App.css";
 
-const socket = socketIOClient(process.env.REACT_APP_API_DOMAIN, {
+const socket = socketIOClient("wss://hammerhead-app-ypn9f.ondigitalocean.app", {
   secure: true,
 });
 
@@ -39,7 +39,7 @@ function App(props) {
   };
 
   async function drawCanvas() {
-    const res = await fetch("http://localhost:8080/canvas");
+    const res = await fetch(process.env.REACT_APP_API_DOMAIN + "/canvas");
     const data = await res.json();
     const canvas = canvasRef.current;
     data.forEach((point) => {
