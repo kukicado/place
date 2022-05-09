@@ -1,0 +1,19 @@
+{
+  "name": "place-be",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.0",
+    "ejs": "^3.1.7",
+    "express": "^4.18.1",
+    "mongodb": "^4.5.0",
+    "socket.io": "^4.5.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
