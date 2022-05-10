@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import socketIOClient from "socket.io-client";
 import "./App.css";
 
-const socket = socketIOClient("wss://hammerhead-app-ypn9f.ondigitalocean.app", {
+const socket = socketIOClient(process.env.REACT_APP_API_DOMAIN, {
   transports: ["websocket"],
   secure: true,
 });
@@ -16,7 +16,7 @@ function App(props) {
     drawCanvas();
     // client-side
     socket.on("connect", () => {
-      console.log(socket.id); // x8WIv7-mJelg7on_ALbx
+      console.log(socket.id);
     });
 
     socket.on("disconnect", () => {
