@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import socketIOClient from "socket.io-client";
 import "./App.css";
 
-const socket = socketIOClient(process.env.REACT_APP_API_DOMAIN, {
+const socket = socketIOClient(process.env.REACT_APP_SOCKET_DOMAIN, {
   transports: ["websocket"],
   secure: true,
 });
