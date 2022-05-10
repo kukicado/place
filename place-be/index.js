@@ -15,7 +15,7 @@ const io = new Server(server, {
     origin: "*",
     methods: ["GET", "POST"],
   },
-  path: "/place-place-be/socket.io",
+  //path: "/place-place-be/socket.io",
 });
 
 let db;
@@ -36,13 +36,11 @@ app.get("/canvas", async (req, res) => {
 });
 
 app.get("/point", async (req, res) => {
-  console.log(req.query);
   let position = {
     x: Number(req.query.x),
     y: Number(req.query.y),
     color: `#${req.query.color}`,
   };
-  console.log(position);
 
   const result = await db
     .collection("canvas")

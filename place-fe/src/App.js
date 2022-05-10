@@ -2,14 +2,11 @@ import React, { useState, useRef, useEffect } from "react";
 import socketIOClient from "socket.io-client";
 import "./App.css";
 
-const socket = socketIOClient(
-  "wss://seal-app-ew88u.ondigitalocean.app/place-place-be",
-  {
-    path: "/place-place-be/socket.io",
-    transports: ["websocket"],
-    secure: true,
-  }
-);
+const socket = socketIOClient("wss://place-backend-o6xkx.ondigitalocean.app/", {
+  //path: "/place-place-be/socket.io",
+  transports: ["websocket"],
+  secure: true,
+});
 
 function App(props) {
   const [color, setColor] = useState("#000000");
@@ -21,6 +18,11 @@ function App(props) {
     // client-side
     socket.on("connect", () => {
       console.log(socket.id);
+    });
+
+    socket.on("connect_error", (data) => {
+      // revert to classic upgrade
+      console.log(data);
     });
 
     socket.on("disconnect", () => {
