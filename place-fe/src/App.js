@@ -13,14 +13,13 @@ function App(props) {
   useEffect(() => {
     socket.connect();
     drawCanvas();
+    // client-side
     socket.on("connect", () => {
-      const transport = socket.io.engine.transport.name; // in most cases, "polling"
-      console.log(transport);
+      console.log(socket.id); // x8WIv7-mJelg7on_ALbx
+    });
 
-      socket.io.engine.on("upgrade", () => {
-        const upgradedTransport = socket.io.engine.transport.name; // in most cases, "websocket"
-        console.log(upgradedTransport);
-      });
+    socket.on("disconnect", () => {
+      console.log(socket.id); // undefined
     });
 
     socket.on("new-point", (x, y, color) => {
