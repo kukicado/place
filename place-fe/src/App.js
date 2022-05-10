@@ -4,6 +4,7 @@ import "./App.css";
 
 const socket = socketIOClient("wss://hammerhead-app-ypn9f.ondigitalocean.app", {
   transports: ["websocket"],
+  secure: true,
 });
 
 function App(props) {
