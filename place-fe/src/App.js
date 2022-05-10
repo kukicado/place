@@ -13,7 +13,18 @@ function App(props) {
   useEffect(() => {
     socket.connect();
     drawCanvas();
+    socket.on("connect", () => {
+      const transport = socket.io.engine.transport.name; // in most cases, "polling"
+      console.log(transport);
+
+      socket.io.engine.on("upgrade", () => {
+        const upgradedTransport = socket.io.engine.transport.name; // in most cases, "websocket"
+        console.log(upgradedTransport);
+      });
+    });
+
     socket.on("new-point", (x, y, color) => {
+      console.log("new point added");
       const canvas = canvasRef.current;
       let ctx = canvas.getContext("2d");
       ctx.fillStyle = color;
