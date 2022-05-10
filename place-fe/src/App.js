@@ -3,7 +3,7 @@ import socketIOClient from "socket.io-client";
 import "./App.css";
 
 const socket = socketIOClient(
-  "https://hammerhead-app-ypn9f.ondigitalocean.app/",
+  "wss://hammerhead-app-ypn9f.ondigitalocean.app/",
   {
     transports: ["websocket"],
   }
