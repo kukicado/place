@@ -2,9 +2,12 @@ import React, { useState, useRef, useEffect } from "react";
 import socketIOClient from "socket.io-client";
 import "./App.css";
 
-const socket = socketIOClient("wss://hammerhead-app-ypn9f.ondigitalocean.app", {
-  rejectUnauthorized: false,
-});
+const socket = socketIOClient(
+  "https://hammerhead-app-ypn9f.ondigitalocean.app/",
+  {
+    transports: ["websocket"],
+  }
+);
 
 function App(props) {
   const [color, setColor] = useState("#000000");
