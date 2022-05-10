@@ -15,6 +15,7 @@ const io = new Server(server, {
     origin: "*",
     methods: ["GET", "POST"],
   },
+  path: "/place-place-be/socket.io",
 });
 
 let db;

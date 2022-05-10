@@ -3,6 +3,7 @@ import socketIOClient from "socket.io-client";
 import "./App.css";
 
 const socket = socketIOClient(process.env.REACT_APP_SOCKET_DOMAIN, {
+  path: "/place-place-be/socket.io",
   transports: ["websocket"],
   secure: true,
 });
