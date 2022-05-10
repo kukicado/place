@@ -2,11 +2,14 @@ import React, { useState, useRef, useEffect } from "react";
 import socketIOClient from "socket.io-client";
 import "./App.css";
 
-const socket = socketIOClient(process.env.REACT_APP_SOCKET_DOMAIN, {
-  path: "/place-place-be/socket.io",
-  transports: ["websocket"],
-  secure: true,
-});
+const socket = socketIOClient(
+  "wss://seal-app-ew88u.ondigitalocean.app/place-place-be",
+  {
+    path: "/place-place-be/socket.io",
+    transports: ["websocket"],
+    secure: true,
+  }
+);
 
 function App(props) {
   const [color, setColor] = useState("#000000");
