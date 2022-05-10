@@ -2,10 +2,10 @@ import React, { useState, useRef, useEffect } from "react";
 import socketIOClient from "socket.io-client";
 import "./App.css";
 
-const socket = socketIOClient("wss://place-backend-o6xkx.ondigitalocean.app/", {
-  //path: "/place-place-be/socket.io",
-  transports: ["websocket"],
-  secure: true,
+const socket = socketIOClient("https://shark-app-4rspo.ondigitalocean.app", {
+  //transports: ["websocket"],
+  //path: "/socket.io",
+  //secure: true,
 });
 
 function App(props) {
