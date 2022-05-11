@@ -1,7 +1,10 @@
 require("dotenv").config();
 
 const { MongoClient } = require("mongodb");
+const aws = require("aws-sdk");
+const formidable = require("formidable");
 const http = require("http");
+const fs = require("fs");
 
 const express = require("express");
 var cors = require("cors");
@@ -14,6 +17,15 @@ const io = new Server(server, {
   cors: {
     origin: "*",
     methods: ["GET", "POST"],
+  },
+});
+
+const s3Client = new aws.S3({
+  endpoint: "https://nyc3.digitaloceanspaces.com",
+  region: "us-east-1",
+  credentials: {
+    accessKeyId: process.env.SPACES_KEY,
+    secretAccessKey: process.env.SPACES_SECRET,
   },
 });
 
@@ -58,6 +70,8 @@ app.get("/point-load", async (req, res) => {
     color: `#${getNum(100000, 999999)}`,
   };
 
+  io.emit("new-point", position.x, position.y, position.color);
+
   const result = await db
     .collection("canvas")
     .updateOne(
@@ -65,7 +79,52 @@ app.get("/point-load", async (req, res) => {
       { $set: { x: position.x, y: position.y, color: position.color } },
       { upsert: true }
     );
+
   res.json(result);
+});
+
+app.get("/screenshots", async (req, res) => {
+  s3Client.listObjects(
+    {
+      Bucket: "place-screenshots",
+    },
+    (err, data) => {
+      const screenshots = [];
+      data.Contents.forEach((screenshot) => {
+        screenshots.push(screenshot.Key);
+      });
+      res.json(screenshots);
+    }
+  );
+});
+
+app.post("/upload", async function (req, res, next) {
+  const form = new formidable.IncomingForm();
+
+  let picture = await new Promise((resolve, reject) => {
+    form.parse(req, (err, fields, files) => {
+      resolve(files.image);
+    });
+  });
+
+  console.log(picture);
+
+  const image = fs.readFileSync(picture.filepath);
+
+  s3Client.putObject(
+    {
+      Bucket: "place-screenshots",
+      Key: picture.originalFilename,
+      Body: image,
+      ACL: "public-read",
+    },
+    (err, data) => {
+      console.log(err);
+      console.log(data);
+    }
+  );
+
+  res.json(picture);
 });
 
 function getNum(min, max) {

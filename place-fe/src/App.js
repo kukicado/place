@@ -1,15 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
 import socketIOClient from "socket.io-client";
-import "./App.css";
 
-const socket = socketIOClient("https://shark-app-4rspo.ondigitalocean.app", {
-  //transports: ["websocket"],
-  //path: "/socket.io",
-  //secure: true,
+const socket = socketIOClient(process.env.REACT_APP_API_DOMAIN, {
+  transports: ["websocket"],
 });
 
 function App(props) {
   const [color, setColor] = useState("#000000");
+  const [screenshots, setScreenshots] = useState([]);
   const canvasRef = useRef(null);
 
   useEffect(() => {
@@ -17,20 +15,11 @@ function App(props) {
     drawCanvas();
     // client-side
     socket.on("connect", () => {
-      console.log(socket.id);
-    });
-
-    socket.on("connect_error", (data) => {
-      // revert to classic upgrade
-      console.log(data);
-    });
-
-    socket.on("disconnect", () => {
-      console.log(socket.id); // undefined
+      console.log(`Connected as ${socket.id}`);
     });
 
     socket.on("new-point", (x, y, color) => {
-      console.log("new point added");
+      console.log(`new point added at: ${(x, y)} with color: ${color}`);
       const canvas = canvasRef.current;
       let ctx = canvas.getContext("2d");
       ctx.fillStyle = color;
@@ -59,12 +48,13 @@ function App(props) {
     const res = await fetch(process.env.REACT_APP_API_DOMAIN + "/canvas");
     const data = await res.json();
     const canvas = canvasRef.current;
+    let ctx = canvas.getContext("2d");
+    ctx.fillStyle = "white";
+    ctx.fillRect(1, 1, 512, 512);
     data.forEach((point) => {
-      let ctx = canvas.getContext("2d");
       ctx.fillStyle = point.color;
       ctx.fillRect(point.x, point.y, 1, 1);
     });
-    console.log(data);
   }
 
   const pickColor = (e) => {
@@ -72,17 +62,77 @@ function App(props) {
     console.log(color);
   };
 
+  const saveScreenshot = async () => {
+    const canvas = canvasRef.current;
+    const image = canvas.toBlob(async (blob) => {
+      const data = new FormData();
+      const fileName = (Math.random() + 1).toString(36).substring(7);
+      data.append("image", blob, `${fileName}.jpeg`);
+
+      const res = await fetch("http://localhost:8080/upload", {
+        method: "POST",
+        body: data,
+      });
+      const final = await res.json();
+      console.log(final);
+      console.log(image);
+    });
+  };
+
+  const viewScreenshots = async () => {
+    const res = await fetch("http://localhost:8080/screenshots");
+    const data = await res.json();
+
+    setScreenshots(data);
+  };
+
   return (
-    <div className="App">
-      <input type="color" value={color} onChange={(e) => pickColor(e)} />
-      <button onClick={() => drawCanvas()}>Draw Canvas</button>
+    <div className="py-20">
+      <div className="text-center mb-2">Select a Color:</div>
+      <input
+        type="color"
+        value={color}
+        onChange={(e) => pickColor(e)}
+        className="block mx-auto"
+      />
       <canvas
+        className="bg-white"
         width="512px"
         height="512px"
         ref={canvasRef}
-        style={{ border: "1px solid black", margin: "25px 0px" }}
+        style={{
+          display: "block",
+          border: "1px solid black",
+          margin: "50px auto",
+        }}
         onMouseDown={(e) => draw(e, canvasRef)}
       />
+
+      <button
+        onClick={() => saveScreenshot()}
+        className="block mx-auto bg-green-700 px-5 py-2 rounded-full text-white"
+      >
+        Save Screenshot
+      </button>
+
+      <button
+        onClick={() => viewScreenshots()}
+        className="block mx-auto bg-blue-700 my-5 px-2 py-1 text-sm rounded-full text-white"
+      >
+        View Screenshots
+      </button>
+
+      <div className="flex flex-row flex-wrap">
+        {screenshots &&
+          screenshots.map((screenshot) => (
+            <img
+              alt={screenshot}
+              key={screenshot}
+              className="flex-1 w-1/4 p-2"
+              src={`https://place-screenshots.nyc3.digitaloceanspaces.com/${screenshot}`}
+            />
+          ))}
+      </div>
     </div>
   );
 }
