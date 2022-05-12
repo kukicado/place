@@ -69,7 +69,7 @@ function App(props) {
       const fileName = (Math.random() + 1).toString(36).substring(7);
       data.append("image", blob, `${fileName}.jpeg`);
 
-      const res = await fetch("http://localhost:8080/upload", {
+      const res = await fetch(process.env.REACT_APP_API_DOMAIN + "/upload", {
         method: "POST",
         body: data,
       });
@@ -80,7 +80,7 @@ function App(props) {
   };
 
   const viewScreenshots = async () => {
-    const res = await fetch("http://localhost:8080/screenshots");
+    const res = await fetch(process.env.REACT_APP_API_DOMAIN + "/screenshots");
     const data = await res.json();
 
     setScreenshots(data);
